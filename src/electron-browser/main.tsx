@@ -4,7 +4,7 @@ import './media/css/global.less';
 import * as electron from 'electron';
 import dva from 'dva';
 import createLoading from 'dva-loading';
-import createHistory from 'history/createBrowserHistory';
+import createHistory from 'history/createHashHistory';
 import appModel from '../models/app';
 import router from '../router';
 
@@ -42,7 +42,7 @@ registerListeners(process.env['APP_DEV']);
 export function startup(): void {
     // 1. Initialize
     const app = dva({
-        history: createHistory(),
+        history: createHistory({ basename: __dirname }),
         onError(error) {
             console.error(error.message);
         },

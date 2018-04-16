@@ -7,7 +7,7 @@ import * as styles from './media/index.css';
 function Dashboard({ dispatch }) {
   function onClick() {
     dispatch(routerRedux.push({
-      pathname: '/index2'
+      pathname: '/'
     }));
   }
 

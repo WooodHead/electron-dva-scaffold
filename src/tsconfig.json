@@ -7,8 +7,13 @@
 		"lib": [
 			"es2016", "dom"
 		],
+		"allowSyntheticDefaultImports": true,
 		"outDir": "../out",
 		"sourceMap": true,
 		"jsx": "react"
-	}
+	},
+	"awesomeTypescriptLoaderOptions": {
+        "useBabel": true,
+        "useCache": true
+    },
 }

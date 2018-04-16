@@ -3,7 +3,7 @@ import * as React from 'react';
 import { RouterAPI, Model } from 'dva';
 import { Route, Switch, Redirect, routerRedux } from 'dva/router';
 import dynamic, { RouteComponentType } from 'dva/dynamic';
-import App from 'routes/app';
+import App from './routes/app';
 
 const { ConnectedRouter } = routerRedux;
 

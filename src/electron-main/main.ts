@@ -1,7 +1,7 @@
-import {BrowserWindow} from 'electron';
+import { BrowserWindow } from 'electron';
 import * as path from 'path';
-import {pkg, rootPath} from 'core/package';
-import {IpcService} from './ipc';
+import { pkg, rootPath } from '../base/node/package';
+import { IpcService } from './ipc';
 
 const index = path.join(rootPath, './out/electron-browser/index.html'); // app/src/ directory
 

@@ -7,7 +7,19 @@ var CleanWebpackPlugin = require('clean-webpack-plugin');
 const outPath = path.join(__dirname, 'out');
 const publicPath = outPath.replace(/\\/g, '/') + '/';
 
-const extractStyle = new ExtractTextPlugin('./electron-browser/media/main.css');
+const extractStyle = new ExtractTextPlugin({
+    filename: './electron-browser/media/main.css',
+    allChunks: true
+});
+
+const css_loader = {
+    loader: 'css-loader',
+    options: {
+        modules: true,
+        importLoaders: 1,
+        localIdentName: '[local]___[hash:base64:5]'
+    }
+};
 
 const config: webpack.Configuration = {
     devtool: 'source-map',
@@ -36,11 +48,15 @@ const config: webpack.Configuration = {
             },
             {
                 test: /\.css$/,
-                loader: extractStyle.extract('css-loader')
+                use: extractStyle.extract({
+                    use: css_loader
+                })
             },
             {
                 test: /\.less$/,
-                loader: extractStyle.extract('css-loader!less-loader')
+                use: extractStyle.extract({
+                    use: [css_loader, 'less-loader']
+                })
             },
             {
                 test: /\.(eot|woff|ttf|png|gif|svg)([\?]?.*)$/,
@@ -59,6 +75,7 @@ const config: webpack.Configuration = {
     output: {
         path: outPath,
         filename: '[name].js',
+        chunkFilename: '[name].[chunkhash].js',
         publicPath: publicPath
     },
     plugins: [
