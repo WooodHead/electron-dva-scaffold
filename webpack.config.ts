@@ -65,8 +65,8 @@ const config: webpack.Configuration = {
         ]
     },
     entry: {
-        'app': [
-            './app'
+        'electron-browser/main': [
+            './electron-browser/main'
         ],
         'electron-main/main': [
             './electron-main/main'

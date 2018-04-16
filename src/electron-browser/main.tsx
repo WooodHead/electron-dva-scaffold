@@ -6,7 +6,7 @@ import dva from 'dva';
 import createLoading from 'dva-loading';
 import createHistory from 'history/createHashHistory';
 import appModel from '../models/app';
-import router from '../router';
+import router from '../routes/router';
 
 const ipc = electron.ipcRenderer;
 
@@ -39,7 +39,7 @@ function registerListeners(enableDeveloperTools) {
 
 registerListeners(process.env['APP_DEV']);
 
-export function startup(): void {
+function startup(): void {
     // 1. Initialize
     const app = dva({
         history: createHistory({ basename: __dirname }),
@@ -60,3 +60,5 @@ export function startup(): void {
     // 5. Start
     app.start('#main');
 }
+
+startup();

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { RouterAPI, Model } from 'dva';
 import { Route, Switch, Redirect, routerRedux } from 'dva/router';
 import dynamic, { RouteComponentType } from 'dva/dynamic';
-import App from './routes/app';
+import App from './app';
 
 const { ConnectedRouter } = routerRedux;
 
@@ -23,7 +23,7 @@ function RouterConfig({ history, app }: RouterAPI) {
   const routes: RouteDescription[] = [
     {
       path: '/home',
-      component: () => import('./routes/home'),
+      component: () => import('./home'),
       models: () => [],
     }
   ];
