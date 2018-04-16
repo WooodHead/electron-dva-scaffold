@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import * as styles from './media/index.css';
+import * as styles from './index.css';
 
 function Dashboard({ dispatch }) {
   function onClick() {

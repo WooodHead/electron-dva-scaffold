@@ -22,8 +22,8 @@ function RouterConfig({ history, app }: RouterAPI) {
 
   const routes: RouteDescription[] = [
     {
-      path: '/dashboard',
-      component: () => import('./routes/dashboard'),
+      path: '/home',
+      component: () => import('./routes/home'),
       models: () => [],
     }
   ];
@@ -32,7 +32,7 @@ function RouterConfig({ history, app }: RouterAPI) {
     <ConnectedRouter history={history}>
       <App>
         <Switch>
-          <Route exact path="/" render={() => (<Redirect to="/dashboard" />)} />
+          <Route exact path="/" render={() => (<Redirect to="/home" />)} />
           {
             routes.map(({ path, component, ...dynamics }, index) => (
               <Route
