@@ -3,7 +3,7 @@ import * as path from 'path';
 import {pkg, rootPath} from 'core/package';
 import {IpcService} from './ipc';
 
-const index = path.join(rootPath, './out/app/electron-browser/index.html'); // app/src/ directory
+const index = path.join(rootPath, './out/electron-browser/index.html'); // app/src/ directory
 
 // Browser Window options
 const mainWindowOption: Electron.BrowserWindowConstructorOptions = {

@@ -18,5 +18,5 @@ app.on('window-all-closed', () => {
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
 app.once('ready', () => {
-    require('./app/electron-main/main');
+    require('./electron-main/main');
 });

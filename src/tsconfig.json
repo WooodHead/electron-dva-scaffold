@@ -4,6 +4,9 @@
 		"moduleResolution": "node",
 		"baseUrl": ".",
 		"target": "es5",
+		"lib": [
+			"es2016", "dom"
+		],
 		"outDir": "../out",
 		"sourceMap": true,
 		"jsx": "react"

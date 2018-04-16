@@ -7,7 +7,7 @@ var CleanWebpackPlugin = require('clean-webpack-plugin');
 const outPath = path.join(__dirname, 'out');
 const publicPath = outPath.replace(/\\/g, '/') + '/';
 
-const extractStyle = new ExtractTextPlugin('./app/electron-browser/media/main.css');
+const extractStyle = new ExtractTextPlugin('./electron-browser/media/main.css');
 
 const config: webpack.Configuration = {
     devtool: 'source-map',
@@ -19,7 +19,11 @@ const config: webpack.Configuration = {
         modules: [
             'node_modules',
             path.join(__dirname, './src')
-        ]
+        ],
+        alias: {
+            interfaces: `${__dirname}/src/interfaces`,
+            routes: `${__dirname}/src/routes`,
+        }
     },
     module: {
         rules: [
@@ -45,11 +49,11 @@ const config: webpack.Configuration = {
         ]
     },
     entry: {
-        'app/app': [
-            './app/app'
+        'app': [
+            './app'
         ],
-        'app/electron-main/main': [
-            './app/electron-main/main'
+        'electron-main/main': [
+            './electron-main/main'
         ]
     },
     output: {

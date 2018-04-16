@@ -1,10 +1,13 @@
 import './media/css/global.less';
 
-import * as ReactDOM from 'react-dom';
-/* tslint:disable no-unused-variable */
-import * as React from 'react';
 /* tslint:enable no-unused-variable */
 import * as electron from 'electron';
+import dva from 'dva';
+import createLoading from 'dva-loading';
+import createHistory from 'history/createBrowserHistory';
+import appModel from '../models/app';
+import router from '../router';
+
 const ipc = electron.ipcRenderer;
 
 function registerListeners(enableDeveloperTools) {
@@ -37,10 +40,23 @@ function registerListeners(enableDeveloperTools) {
 registerListeners(process.env['APP_DEV']);
 
 export function startup(): void {
-    // ReactDOM.render(
-    //     <Provider store={ configureStore() }>
-    //         <Router routes={ createRoutes() } history={ hashHistory } />
-    //     </Provider>,
-    //     document.getElementById('main')
-    // );
+    // 1. Initialize
+    const app = dva({
+        history: createHistory(),
+        onError(error) {
+            console.error(error.message);
+        },
+    });
+
+    // 2. Plugins
+    app.use(createLoading({ effects: true }));
+
+    // 3. Model
+    app.model(appModel);
+
+    // 4. Router
+    app.router(router);
+
+    // 5. Start
+    app.start('#main');
 }
