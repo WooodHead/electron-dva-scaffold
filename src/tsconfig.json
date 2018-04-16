@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"module": "amd",
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"target": "es5",
+		"outDir": "../out",
+		"sourceMap": true,
+		"jsx": "react"
+	}
+}
