@@ -1,13 +1,12 @@
 {
 	"compilerOptions": {
-		"module": "amd",
+		"module": "esnext",
 		"moduleResolution": "node",
 		"baseUrl": ".",
-		"target": "es5",
+		"target": "es6",
 		"lib": [
 			"es2016", "dom"
 		],
-		"allowSyntheticDefaultImports": true,
 		"outDir": "../out",
 		"sourceMap": true,
 		"jsx": "react"

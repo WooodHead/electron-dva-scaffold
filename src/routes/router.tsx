@@ -1,6 +1,6 @@
 // tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
-import { RouterAPI, Model } from 'dva';
+import { RouterAPI } from 'dva';
 import { Route, Switch, Redirect, routerRedux } from 'dva/router';
 import dynamic, { RouteComponentType } from 'dva/dynamic';
 import App from './app';
@@ -9,7 +9,7 @@ const { ConnectedRouter } = routerRedux;
 
 interface RouteDescription {
   path: string;
-  models?: () => Promise<Model>[];
+  models?: () => Promise<any>[];
   component: () => RouteComponentType | Promise<any>;
 }
 
@@ -23,8 +23,13 @@ function RouterConfig({ history, app }: RouterAPI) {
   const routes: RouteDescription[] = [
     {
       path: '/home',
-      component: () => import('./home'),
+      component: () => System.import('./home'),
       models: () => [],
+    },
+    {
+      path: '/login',
+      component: () => System.import('./login'),
+      models: () => [System.import('../models/login')],
     }
   ];
 

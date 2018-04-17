@@ -42,7 +42,7 @@ registerListeners(process.env['APP_DEV']);
 function startup(): void {
     // 1. Initialize
     const app = dva({
-        history: createHistory({ basename: __dirname }),
+        history: createHistory(),
         onError(error) {
             console.error(error.message);
         },

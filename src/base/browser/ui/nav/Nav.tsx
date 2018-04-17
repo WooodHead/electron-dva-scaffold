@@ -1,6 +1,6 @@
 import './media/css/nav.less';
 import * as React from 'react';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 
 export interface NavProps {
 
