@@ -7,6 +7,7 @@ export interface IPackageConfiguration {
 
 export const rootPath: string = process.env['APP_ROOT'];
 export const packageJsonPath = path.join(rootPath, 'package.json');
+export const resourcesPath = path.join(rootPath, 'resources');
 
 // Use node require.
 export const pkg = global['require'](packageJsonPath) as IPackageConfiguration;

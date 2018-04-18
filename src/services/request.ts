@@ -1,13 +1,13 @@
 import * as qs from 'query-string';
 
-interface RequestResult {
-    status: number;
-    message?: string;
-    item?: any;
-}
+// interface RequestResult {
+//     status: number;
+//     message?: string;
+//     item?: any;
+// }
 
 async function filterRes(res: Response) {
-    let result: RequestResult;
+    let result: any;
     try {
         result = await res.json();
     } catch (error) {
@@ -46,10 +46,9 @@ export async function get(path: string, options?: GetOptions) {
     let url: string;
     options = options || {};
 
-    options.headers = {
-        ...defaultHeaders,
-        ...options.headers
-    };
+    if (!options.headers) {
+        options.headers = Object.assign({}, defaultHeaders);
+    }
 
     url = (options.prefix || '') + path;
     if (options.params) {

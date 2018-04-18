@@ -13,25 +13,36 @@ interface RouteDescription {
   component: () => RouteComponentType | Promise<any>;
 }
 
+const routes: RouteDescription[] = [];
+
+export function registeRoute(route: RouteDescription) {
+  routes.push(route);
+}
+
+registeRoute({
+  path: '/home',
+  component: () => System.import('./home'),
+  models: () => [],
+});
+
+registeRoute({
+  path: '/login',
+  component: () => System.import('./login'),
+  models: () => [System.import('../models/login')],
+});
+
+registeRoute({
+  path: '/export',
+  component: () => System.import('./export'),
+  models: () => [System.import('../models/shopify')],
+});
+
 function RouterConfig({ history, app }: RouterAPI) {
   // todo: 404 page.
   const error = dynamic({
     app,
     component: () => () => (<div>404</div>),
   });
-
-  const routes: RouteDescription[] = [
-    {
-      path: '/home',
-      component: () => System.import('./home'),
-      models: () => [],
-    },
-    {
-      path: '/login',
-      component: () => System.import('./login'),
-      models: () => [System.import('../models/login')],
-    }
-  ];
 
   return (
     <ConnectedRouter history={history}>

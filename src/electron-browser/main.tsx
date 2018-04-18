@@ -10,6 +10,8 @@ import router from '../routes/router';
 
 const ipc = electron.ipcRenderer;
 
+global['__DEV__'] = !!process.env['APP_DEV'];
+
 function registerListeners(enableDeveloperTools) {
     // Devtools & Reload support
     if (enableDeveloperTools) {

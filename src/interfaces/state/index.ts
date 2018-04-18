@@ -1,5 +1,6 @@
 import { RouterState } from 'react-router-redux';
 import { UserInfo, Menu } from '../user';
+import { ShopifyOrder } from '../shopify';
 
 export interface LoadingState {
     global: boolean;
@@ -29,8 +30,13 @@ export interface AppState {
     locationPathQuery: Object;
 }
 
+export interface ShopifyState {
+    orders: ShopifyOrder[];
+}
+
 export interface ReduxState {
     app: AppState;
     loading: LoadingState;
     routing: RoutingState;
+    shopify: ShopifyState;
 }
