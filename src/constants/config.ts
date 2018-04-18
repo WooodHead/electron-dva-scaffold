@@ -10,5 +10,5 @@ server.apiPrefix = '/api/v1';
 
 export const openPages = ['/login'];
 
-export const name = '通晓管理后台';
+export const name = '订单管理系统';
 export const logo = path.join(rootPath, '/resources/images/logo.png');

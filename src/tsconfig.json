@@ -9,6 +9,7 @@
 		],
 		"outDir": "../out",
 		"sourceMap": true,
+		"allowSyntheticDefaultImports": true,
 		"jsx": "react"
 	},
 	"awesomeTypescriptLoaderOptions": {

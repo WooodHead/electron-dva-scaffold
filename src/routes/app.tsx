@@ -9,10 +9,12 @@ import { ReduxState, AppState, LoadingState } from 'interfaces/state';
 import Loader from 'components/loader';
 import Header from './main/Header';
 import Sider from './main/Sider';
+import Error from './error';
 import { openPages } from 'constants/config';
 import * as styles from './main/index.less';
 import '../themes/index.less';
 import './app.less';
+import pathToRegexp from 'path-to-regexp';
 
 interface AppProps {
 
@@ -28,10 +30,12 @@ type Props = Readonly<AppProps & StateProps & DvaRouteComponentProps>;
 let lastHref: string;
 
 const App = ({ loading, children, location, app }: Props) => {
-    const { isNavbar, siderFold, darkTheme, menus } = app;
+    const { isNavbar, siderFold, darkTheme, menus, permissions } = app;
     const href = window.location.href;
     let { pathname } = location;
     pathname = pathname.startsWith('/') ? pathname : `/${pathname}`;
+    const current = menus.filter(item => pathToRegexp(item.route || '').exec(pathname));
+    const hasPermission = current.length ? permissions.visit.includes(current[0].id) : false;
 
     if (lastHref !== href) {
         NProgress.start();
@@ -59,6 +63,11 @@ const App = ({ loading, children, location, app }: Props) => {
                 </aside> : ''}
                 <div className={styles.main}>
                     <Header />
+                    <div className={styles.container}>
+                        <div className={styles.content}>
+                            {hasPermission ? children : <Error />}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
