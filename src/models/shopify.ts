@@ -22,7 +22,7 @@ export default {
 			});
 		},
 		* export({ payload }, { call }) {
-			yield call(export_invoice, payload);
+			yield call(export_invoice, payload.order, payload.dir);
 		},
 	},
 

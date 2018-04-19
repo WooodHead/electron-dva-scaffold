@@ -3,6 +3,7 @@ import './media/css/global.less';
 /* tslint:enable no-unused-variable */
 import * as electron from 'electron';
 import dva from 'dva';
+import { message } from 'antd';
 import createLoading from 'dva-loading';
 import createHistory from 'history/createHashHistory';
 import appModel from '../models/app';
@@ -46,7 +47,7 @@ function startup(): void {
     const app = dva({
         history: createHistory(),
         onError(error) {
-            console.error(error.message);
+            message.error(error.message);
         },
     });
 

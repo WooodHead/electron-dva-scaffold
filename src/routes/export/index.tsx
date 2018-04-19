@@ -1,14 +1,18 @@
 // tslint:disable-next-line:no-unused-variable
 import * as React from 'react';
 import { connect } from 'dva';
-import { Button, Table } from 'antd';
+import { Button, Table, message } from 'antd';
+import { remote } from 'electron';
+import moment from 'moment';
 import { ReduxState } from 'interfaces/state';
 import { DvaRouteComponentProps } from 'interfaces';
 import { OrdersOptions } from 'services/shopify';
-import { TableRowSelection } from 'antd/lib/table';
-import { ShopifyOrder } from 'interfaces/shopify';
+import { TableRowSelection, ColumnProps } from 'antd/lib/table';
+import { ShopifyOrder, ShopifyCustomer } from 'interfaces/shopify';
 
-const columns = [
+const dialog = remote.dialog;
+
+const columns: ColumnProps<ShopifyOrder>[] = [
 	{
 		title: '订单号',
 		dataIndex: 'name',
@@ -16,18 +20,40 @@ const columns = [
 	{
 		title: '日期',
 		dataIndex: 'updated_at',
+		render: text => {
+			return <span>{moment(text).fromNow()}</span>;
+		},
 	},
 	{
 		title: '客户',
+		width: 150,
 		dataIndex: 'customer',
+		render: (customer: ShopifyCustomer) => {
+			return <span style={{ whiteSpace: 'nowrap' }}>{customer.first_name} {customer.last_name}</span>;
+		},
 	},
 	{
 		title: '支付状态',
 		dataIndex: 'financial_status',
+		render: (text: string) => {
+			if (text === 'paid') {
+				text = '已支付';
+			}
+			return <span>{text}</span>;
+		},
 	},
 	{
 		title: '发货状态',
 		dataIndex: 'fulfillment_status',
+		render: (text: string) => {
+			if (!text) {
+				text = '未发货';
+			}
+			if (text === 'fulfilled') {
+				text = '已发货';
+			}
+			return <span>{text}</span>;
+		},
 	},
 	{
 		title: '总价',
@@ -46,7 +72,7 @@ interface StateProps {
 type Props = ExportProps & StateProps & DvaRouteComponentProps;
 
 interface ExportState {
-	selectedRowKeys: number[];
+	selectedRowKeys: string[];
 }
 
 class Export extends React.Component<Props, ExportState> {
@@ -58,6 +84,7 @@ class Export extends React.Component<Props, ExportState> {
 	}
 
 	private refresh() {
+		this.setState({ selectedRowKeys: [] });
 		this.props.dispatch({
 			type: 'shopify/query', payload: {
 				status: 'any',
@@ -68,12 +95,32 @@ class Export extends React.Component<Props, ExportState> {
 
 	private export() {
 		const { dispatch } = this.props;
-		const keys = this.state.selectedRowKeys;
-		const orders = keys.map(index => {
-			return this.props.orders[index];
+		const ids = this.state.selectedRowKeys;
+		if (ids.length === 0) {
+			message.error('请选择要导出发票的订单');
+			return;
+		}
+		const orders = this.props.orders.filter(order => {
+			return ids.includes(order.id.toString());
 		});
-		orders.map(order => {
-			dispatch({ type: 'shopify/export', payload: order });
+
+		dialog.showOpenDialog(remote.getCurrentWindow(), {
+			title: '选择导出文件夹',
+			properties: ['openDirectory']
+		}, paths => {
+			if (paths.length < 1) {
+				return;
+			}
+			const dir = paths[0];
+			orders.map(order => {
+				dispatch({
+					type: 'shopify/export',
+					payload: {
+						order,
+						dir
+					}
+				});
+			});
 		});
 	}
 
@@ -82,24 +129,20 @@ class Export extends React.Component<Props, ExportState> {
 		const rowSelection: TableRowSelection<any> = {
 			selectedRowKeys: this.state.selectedRowKeys,
 			hideDefaultSelections: true,
-			selections: [
-				{
-					key: 'export-invoice',
-					text: '导出发票',
-					onSelect: () => {
-						this.export();
-					}
-				}
-			],
 			onChange: (selectedRowKeys) => {
 				this.setState({ selectedRowKeys: selectedRowKeys as any });
 			}
 		};
 
+		const rowKey = (order: ShopifyOrder, index) => {
+			return order.id.toString();
+		};
+
 		return (
 			<div>
 				<Button loading={loading} onClick={this.refresh.bind(this)}>加载订单</Button>
-				<Table rowSelection={rowSelection} columns={columns} size='small' dataSource={orders} >
+				<Button onClick={this.export.bind(this)}>导出发票</Button>
+				<Table loading={loading} rowKey={rowKey} rowSelection={rowSelection} columns={columns} size='small' dataSource={orders} >
 				</Table>
 			</div>
 		);

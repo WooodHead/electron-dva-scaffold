@@ -2,6 +2,8 @@ import * as request from './request';
 import { ShopifyOrder, ShopifyOrderAddress } from 'interfaces/shopify';
 import { Workbook, Row } from 'exceljs';
 import * as path from 'path';
+import moment from 'moment';
+import number2english from 'number2english';
 import { resourcesPath } from 'base/node/package';
 
 export interface OrdersOptions {
@@ -39,14 +41,23 @@ export async function orders(options?: OrdersOptions) {
 
 function getAddress(ship: ShopifyOrderAddress) {
 	const { address1, address2, city, province, zip, country } = ship;
-	return `${address1} ${address2}, ${city}, ${province}, ${zip ? (zip + ', ') : ''}${country}`;
+	let address = '';
+	address += `${address1} ${address2}, `;
+	address += `${city}, `;
+	address += province ? `${province}, ` : '';
+	address += zip ? `${zip}, ` : '';
+	address += country;
+	return address;
 }
 
-export async function export_invoice(order: ShopifyOrder) {
+export async function export_invoice(order: ShopifyOrder, export_dir: string) {
 	const workbook = new Workbook();
 	await workbook.xlsx.readFile(path.join(resourcesPath, 'invoice.xlsx'));
 	const sheet = workbook.getWorksheet(undefined);
 	(sheet as any).name = order.name.replace('#', '');
+
+	const date_cell = sheet.getCell('F7');
+	date_cell.value = new Date();
 
 	const address = getAddress(order.shipping_address);
 	const address_cell = sheet.getCell('B8');
@@ -59,25 +70,14 @@ export async function export_invoice(order: ShopifyOrder) {
 	tel_cell.value = order.shipping_address.phone;
 
 	const ino_cell = sheet.getCell('F9');
-	ino_cell.value = `QTA${180414}11`;  // todo
+	const qta = `QTA${moment().format('YYMMDD')}${order.name.replace(/[^0-9]/ig, "")}`;
+	ino_cell.value = qta;
 
 	const attn_cell = sheet.getCell('B10');
 	attn_cell.value = `${order.shipping_address.first_name} ${order.shipping_address.last_name}`;
 
 	const email_cell = sheet.getCell('B11');
 	email_cell.value = order.email;
-
-	const dollor_cell = sheet.getCell('A15');
-	dollor_cell.value = 'SAY: US DOLLAR ONE HUNDRED AND FORTY NINE ONLY. ';
-	const dollor_model = Object.assign({}, dollor_cell.model);
-
-	const china_cell = sheet.getCell('A16');
-	china_cell.value = 'MADE IN CHINA';
-	const china_model = Object.assign({}, china_cell.model);
-
-	const line_start_row = 13;
-	const total_row_index = 14;
-	const rows = [];
 
 	function saveStyles(row: Row) {
 		let cell_styles = [];
@@ -97,21 +97,34 @@ export async function export_invoice(order: ShopifyOrder) {
 		}
 	}
 
+	const line_start_row = 13;
+	const total_row_index = 14;
+	const rows = [];
+
 	const line_row = sheet.getRow(line_start_row);
 	const line_row_styles = saveStyles(line_row);
 
 	const total_row = sheet.getRow(total_row_index);
 	const total_row_styles = saveStyles(total_row);
 
+	const dollor_row = sheet.getRow(total_row_index + 1);
+	const dollor_row_styles = saveStyles(dollor_row);
+
+	const china_row = sheet.getRow(total_row_index + 2);
+	const china_row_styles = saveStyles(china_row);
+
+	let total_price = 0;
 	order.line_items.map((item, i) => {
+		const line_price = item.quantity * parseFloat(item.price);
 		const row_data = [
 			item.sku,
 			item.name,
 			item.quantity,
 			item.price,
-			item.quantity * parseFloat(item.price),
+			line_price,
 			""
 		];
+		total_price += line_price;
 		rows.push(row_data);
 	});
 	sheet.spliceRows(line_start_row, 1, ...rows);
@@ -121,17 +134,33 @@ export async function export_invoice(order: ShopifyOrder) {
 		restoreStyles(r, line_row_styles);
 	});
 
-	const new_total_row = sheet.getRow(total_row_index + order.line_items.length - 1);
+	const new_total_row_index = total_row_index + order.line_items.length - 1;
+	const new_total_row = sheet.getRow(new_total_row_index);
 	restoreStyles(new_total_row, total_row_styles);
 
-	const dollor_row_index = line_start_row + order.line_items.length + 1;
-	const china_row_index = dollor_row_index + 1;
+	const total_cell = sheet.getCell(`E${new_total_row_index}`);
+	total_cell.value = {
+		formula: `SUM(E${line_start_row}:E${new_total_row_index - 1})`,
+		result: total_price
+	};
 
-	// sheet.mergeCells(`A${dollor_row_index}:F${dollor_row_index}`);
-	// sheet.spliceRows(dollor_row_index, 0, [dollor_model.value]);
+	const new_dollor_row_index = new_total_row_index + 1;
+	const new_dollor_row = sheet.getRow(new_dollor_row_index);
+	restoreStyles(new_dollor_row, dollor_row_styles);
 
-	// sheet.mergeCells(`A${china_row_index}:B${china_row_index}`);
-	// sheet.spliceRows(china_row_index, 0, [china_model.value]);
+	const new_china_row_index = new_dollor_row_index + 1;
+	const new_china_row = sheet.getRow(new_china_row_index);
+	restoreStyles(new_china_row, china_row_styles);
 
-	await workbook.xlsx.writeFile(path.join(resourcesPath, order.name + '.xlsx'));
+	const new_dollor_cell = sheet.getCell(`A${new_dollor_row_index}`);
+	new_dollor_cell.value = `SAY: US DOLLAR ${number2english(total_price).toUpperCase()} ONLY. `;
+
+	if (!new_dollor_cell.isMerged) {
+		sheet.mergeCells(`A${new_dollor_row_index}:F${new_dollor_row_index}`);
+	}
+	// if (!new_china_cell.isMerged) {
+	// 	sheet.mergeCells(`A${new_china_row_index}:B${new_china_row_index}`);
+	// }
+
+	await workbook.xlsx.writeFile(path.join(export_dir, order.name + '.xlsx'));
 }
