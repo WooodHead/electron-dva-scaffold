@@ -1,6 +1,6 @@
 import { RouterState } from 'react-router-redux';
 import { UserInfo, Menu } from '../user';
-import { ShopifyOrder, ExpressOrder } from '../shopify';
+import { ShopifyOrder, ExpressOrder, ImportSettings, ExportSettings } from '../shopify';
 
 export interface LoadingState {
     global: boolean;
@@ -33,6 +33,8 @@ export interface AppState {
 export interface ShopifyState {
     orders: ShopifyOrder[];
     express_orders: ExpressOrder[];
+    import_settings: ImportSettings;
+    export_settings: ExportSettings;
 }
 
 export interface ReduxState {

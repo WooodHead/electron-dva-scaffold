@@ -19,6 +19,28 @@ const database = [
         icon: 'shopping-cart',
         route: '/import',
     },
+    {
+        id: '4',
+        bpid: '1',
+        name: '设置',
+        icon: 'setting'
+    },
+    {
+        id: '41',
+        bpid: '4',
+        mpid: '4',
+        name: '导出设置',
+        icon: 'setting',
+        route: '/settings/export',
+    },
+    {
+        id: '42',
+        bpid: '4',
+        mpid: '4',
+        name: '导入设置',
+        icon: 'setting',
+        route: '/settings/import',
+    },
 ];
 
 export async function queryMenus() {

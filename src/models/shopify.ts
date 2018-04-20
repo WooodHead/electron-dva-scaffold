@@ -1,5 +1,5 @@
 import { Model } from 'dva';
-import { orders, export_invoice, import_express, delivery } from 'services/shopify';
+import { orders, export_invoice, import_express, delivery, change_settings } from 'services/shopify';
 import { ShopifyState, ReduxState } from 'interfaces/state';
 import { ExpressOrder } from 'interfaces/shopify';
 
@@ -7,11 +7,36 @@ export default {
 	namespace: 'shopify',
 	state: {
 		orders: [],
-		express_orders: []
+		express_orders: [],
+		import_settings: {
+			order_start_line: 4,
+			excel_mapping: [
+				{ id: 'id', col: 'M', label: '订单ID' },
+				{ id: 'tracking_number', col: 'C', label: '运单号' },
+				{ id: 'twice_number', col: 'D', label: '二程单号' },
+				{ id: 'date', col: 'B', label: '寄件日期' },
+				{ id: 'route', col: 'E', label: '路线' },
+				{ id: 'destination', col: 'I', label: '目的地' },
+				{ id: 'recipient', col: 'L', label: '收件人' },
+			]
+		},
+		export_settings: {
+			item_start_line: 13,
+			cell_mapping: [
+				{ id: 'date', cell: 'F7', label: '日期' },
+				{ id: 'address', cell: 'B8', label: '地址' },
+				{ id: 'po', cell: 'F8', label: '订单名' },
+				{ id: 'tel', cell: 'B9', label: '电话' },
+				{ id: 'ino', cell: 'F9', label: '流水号' },
+				{ id: 'attn', cell: 'B10', label: '客户' },
+				{ id: 'email', cell: 'B11', label: '邮箱' }
+			]
+		}
 	} as ShopifyState,
 	subscriptions: {
 		// tslint:disable-next-line:no-unused-variable
 		setup({ dispatch, history }) {
+			dispatch({ type: 'applySettings' });
 		},
 	},
 
@@ -22,6 +47,35 @@ export default {
 				type: 'updateState',
 				payload: { orders: list }
 			});
+		},
+		* applySettings(action, { call, select }) {
+			const { import_settings, export_settings }: ShopifyState = yield select((_: ReduxState) => _.shopify);
+			yield call(change_settings, {
+				import: import_settings,
+				export: export_settings
+			});
+		},
+		* changeImportSettings({ payload }, { put }) {
+			yield put({
+				type: 'updateState',
+				payload: {
+					import_settings: {
+						...payload
+					}
+				}
+			});
+			yield put({ type: 'applySettings' });
+		},
+		* changeExportSettings({ payload }, { put }) {
+			yield put({
+				type: 'updateState',
+				payload: {
+					export_settings: {
+						...payload
+					}
+				}
+			});
+			yield put({ type: 'applySettings' });
 		},
 		* export({ payload }, { call }) {
 			yield call(export_invoice, payload.order, payload.dir);
@@ -52,7 +106,7 @@ export default {
 		// 	state.express_orders
 		// 	return {
 		// 		...state,
-				
+
 		// 	};
 		// },
 		updateState(state, { payload }) {

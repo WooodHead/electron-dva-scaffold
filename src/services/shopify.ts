@@ -1,5 +1,5 @@
 import * as request from './request';
-import { ShopifyOrder, ShopifyOrderAddress, ExpressOrder } from 'interfaces/shopify';
+import { ShopifyOrder, ShopifyOrderAddress, ExpressOrder, ImportSettings, ExportSettings } from 'interfaces/shopify';
 import { Workbook, Row } from 'exceljs';
 import * as path from 'path';
 import moment from 'moment';
@@ -75,6 +75,17 @@ const headers = {
 	Authorization: `Basic ${window.btoa(api_key + ':' + password)}`
 };
 
+interface Settings {
+	import: ImportSettings;
+	export: ExportSettings;
+}
+
+let settings: Settings;
+
+export function change_settings(value: Settings) {
+	settings = value;
+}
+
 export async function orders(options?: OrdersOptions) {
 	const body = await request.get(`${baseUrl}/admin/orders.json`, {
 		headers: headers,
@@ -94,33 +105,43 @@ function getAddress(ship: ShopifyOrderAddress) {
 	return address;
 }
 
+
+
 export async function export_invoice(order: ShopifyOrder, export_dir: string) {
 	const workbook = new Workbook();
 	await workbook.xlsx.readFile(path.join(resourcesPath, 'invoice.xlsx'));
 	const sheet = workbook.getWorksheet(undefined);
 	(sheet as any).name = order.name.replace('#', '');
 
-	const date_cell = sheet.getCell('F7');
+	function findCellPosition(id: string) {
+		const data = settings.export.cell_mapping.find(data => data.id === id);
+		if (!data) {
+			throw new Error('找不到单元格: ' + id);
+		}
+		return data.cell;
+	}
+
+	const date_cell = sheet.getCell(findCellPosition('date'));
 	date_cell.value = new Date();
 
 	const address = getAddress(order.shipping_address);
-	const address_cell = sheet.getCell('B8');
+	const address_cell = sheet.getCell(findCellPosition('address'));
 	address_cell.value = address;
 
-	const po_cell = sheet.getCell('F8');
+	const po_cell = sheet.getCell(findCellPosition('po'));
 	po_cell.value = order.name;
 
-	const tel_cell = sheet.getCell('B9');
+	const tel_cell = sheet.getCell(findCellPosition('tel'));
 	tel_cell.value = order.shipping_address.phone;
 
-	const ino_cell = sheet.getCell('F9');
+	const ino_cell = sheet.getCell(findCellPosition('ino'));
 	const qta = `QTA${moment().format('YYMMDD')}${order.name.replace(/[^0-9]/ig, "")}`;
 	ino_cell.value = qta;
 
-	const attn_cell = sheet.getCell('B10');
+	const attn_cell = sheet.getCell(findCellPosition('attn'));
 	attn_cell.value = `${order.shipping_address.first_name} ${order.shipping_address.last_name}`;
 
-	const email_cell = sheet.getCell('B11');
+	const email_cell = sheet.getCell(findCellPosition('email'));
 	email_cell.value = order.email;
 
 	function saveStyles(row: Row) {
@@ -141,8 +162,8 @@ export async function export_invoice(order: ShopifyOrder, export_dir: string) {
 		}
 	}
 
-	const line_start_row = 13;
-	const total_row_index = 14;
+	const line_start_row = settings.export.item_start_line;
+	const total_row_index = line_start_row + 1;
 	const rows = [];
 
 	const line_row = sheet.getRow(line_start_row);
@@ -215,26 +236,18 @@ export async function import_express(file: string) {
 	await workbook.xlsx.readFile(file);
 	const sheet = workbook.getWorksheet(undefined);
 
-	const line_start_index = 4;
+	const line_start_index = settings.import.order_start_line;
 	let index = line_start_index;
 
-	const cell_map = {
-		'M': 'id',
-		'B': 'date',
-		'C': 'tracking_number',
-		'D': 'twice_number',
-		'E': 'route',
-		'I': 'destination',
-		'L': 'recipient'
-	};
+	const excel_mapping = settings.import.excel_mapping;
 
 	const orders: ExpressOrder[] = [];
 
 	while (!sheet.getCell(`A${index}`).isMerged) {
 		const order = Object.create(null);
-		Object.keys(cell_map).forEach(c => {
-			const cell = sheet.getCell(`${c}${index}`);
-			order[cell_map[c]] = cell.text;
+		excel_mapping.forEach(data => {
+			const cell = sheet.getCell(`${data.col}${index}`);
+			order[data.id] = cell.text;
 		});
 		orders.push(order);
 		index++;

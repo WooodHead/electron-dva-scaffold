@@ -179,3 +179,21 @@ export interface ExpressOrder {
 	recipient: string;
 	fulfillment?: any;
 }
+
+export interface ImportSettings {
+	order_start_line: number;
+	excel_mapping: {
+		id: string;
+		label: string;
+		col: string;
+	}[];
+}
+
+export interface ExportSettings {
+	item_start_line: number;
+	cell_mapping: {
+		id: string;
+		label: string;
+		cell: string;
+	}[];
+}

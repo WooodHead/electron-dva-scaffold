@@ -43,6 +43,18 @@ registeRoute({
   models: () => [System.import('../models/shopify')],
 });
 
+registeRoute({
+  path: '/settings/export',
+  component: () => System.import('./shopify/settings/ExportSettings'),
+  models: () => [System.import('../models/shopify')],
+});
+
+registeRoute({
+  path: '/settings/import',
+  component: () => System.import('./shopify/settings/ImportSettings'),
+  models: () => [System.import('../models/shopify')],
+});
+
 function RouterConfig({ history, app }: RouterAPI) {
   const error = dynamic({
     app,
