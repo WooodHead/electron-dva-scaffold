@@ -98,13 +98,13 @@ class Import extends React.Component<Props, ImportState> {
 	}
 
 	private delivery() {
-		const ids = this.state.selectedRowKeys;
-		if (ids.length === 0) {
+		const indexs = this.state.selectedRowKeys;
+		if (indexs.length === 0) {
 			message.error('请选择要同步发货状态的订单');
 			return;
 		}
-		const orders = this.props.orders.filter(order => {
-			return ids.includes(order.id.toString());
+		const orders = this.props.orders.filter((order, index) => {
+			return indexs.includes(index.toString());
 		});
 		orders.map(order => {
 			this.props.dispatch({
@@ -125,7 +125,8 @@ class Import extends React.Component<Props, ImportState> {
 		};
 
 		const rowKey = (order: ExpressOrder, index) => {
-			return order.id.toString();
+			// fix: 不能使用订单id作为key，有可能不存在
+			return index.toString();
 		};
 
 		return (

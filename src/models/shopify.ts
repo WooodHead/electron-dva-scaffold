@@ -1,5 +1,6 @@
 import { Model } from 'dva';
 import { orders, export_invoice, import_express, delivery, change_settings } from 'services/shopify';
+import { m } from 'services/message';
 import { ShopifyState, ReduxState } from 'interfaces/state';
 import { ExpressOrder } from 'interfaces/shopify';
 
@@ -88,7 +89,12 @@ export default {
 			yield call(export_invoice, payload.order, payload.dir);
 		},
 		* import({ payload }, { call, put }) {
-			const express_orders = yield call(import_express, payload);
+			let express_orders: ExpressOrder[] = yield call(import_express, payload);
+			const length = express_orders.length;
+			express_orders = express_orders.filter(order => !!order.id);
+			if (express_orders.length < length) {
+				m.warn(`导入${length}条订单数据, 已过滤无订单ID的数据${length - express_orders.length}条`);
+			}
 			yield put({
 				type: 'updateState',
 				payload: { express_orders }
