@@ -8,6 +8,8 @@ import createLoading from 'dva-loading';
 import createHistory from 'history/createHashHistory';
 import appModel from '../models/app';
 import router from '../routes/router';
+import moment from 'moment';
+moment.locale('zh-CN');
 
 const ipc = electron.ipcRenderer;
 

@@ -168,3 +168,14 @@ export interface ShopifyOrder {
 	updated_at: string;
 	user_id: number;
 }
+
+export interface ExpressOrder {
+	id: string;
+	tracking_number: string;
+	twice_number: string;
+	date: string;
+	route: string;
+	destination: string;
+	recipient: string;
+	fulfillment?: any;
+}

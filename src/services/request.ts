@@ -58,7 +58,6 @@ export async function get(path: string, options?: GetOptions) {
     const init: RequestInit = {
         method: 'GET',
         headers: options.headers,
-        credentials: 'include'
     };
 
     if (__DEV__) {
@@ -82,8 +81,11 @@ export async function post(path: string, options?: PostOptions) {
 
     url = (options.prefix || '') + path;
 
+    if (!options.headers) {
+        options.headers = Object.assign({}, defaultHeaders);
+    }
+
     options.headers = {
-        ...defaultHeaders,
         ...{
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -105,7 +107,6 @@ export async function post(path: string, options?: PostOptions) {
 
     const init: RequestInit = {
         method: 'POST',
-        credentials: 'include',
         headers: options.headers,
         body: requestBody
     };

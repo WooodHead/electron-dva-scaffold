@@ -35,8 +35,10 @@ const App = ({ loading, children, location, app }: Props) => {
     let { pathname } = location;
     pathname = pathname.startsWith('/') ? pathname : `/${pathname}`;
     const current = menus.filter(item => pathToRegexp(item.route || '').exec(pathname));
-    const hasPermission = current.length ? permissions.visit.includes(current[0].id) : false;
-
+    let hasPermission = pathname === '/' ? true : false;
+    if (current.length > 0) {
+        hasPermission = permissions.visit.includes(current[0].id);
+    }
     if (lastHref !== href) {
         NProgress.start();
         if (!loading.global) {

@@ -33,15 +33,20 @@ registeRoute({
 
 registeRoute({
   path: '/export',
-  component: () => System.import('./export'),
+  component: () => System.import('./shopify/export'),
+  models: () => [System.import('../models/shopify')],
+});
+
+registeRoute({
+  path: '/import',
+  component: () => System.import('./shopify/import'),
   models: () => [System.import('../models/shopify')],
 });
 
 function RouterConfig({ history, app }: RouterAPI) {
-  // todo: 404 page.
   const error = dynamic({
     app,
-    component: () => () => (<div>404</div>),
+    component: () => System.import('./error'),
   });
 
   return (

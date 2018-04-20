@@ -9,6 +9,7 @@ import { DvaRouteComponentProps } from 'interfaces';
 import { OrdersOptions } from 'services/shopify';
 import { TableRowSelection, ColumnProps } from 'antd/lib/table';
 import { ShopifyOrder, ShopifyCustomer } from 'interfaces/shopify';
+import * as styles from './index.less';
 
 const dialog = remote.dialog;
 
@@ -19,6 +20,7 @@ const columns: ColumnProps<ShopifyOrder>[] = [
 	},
 	{
 		title: '日期',
+		width: 120,
 		dataIndex: 'updated_at',
 		render: text => {
 			return <span>{moment(text).fromNow()}</span>;
@@ -27,9 +29,10 @@ const columns: ColumnProps<ShopifyOrder>[] = [
 	{
 		title: '客户',
 		width: 150,
+		className: 'customer',
 		dataIndex: 'customer',
 		render: (customer: ShopifyCustomer) => {
-			return <span style={{ whiteSpace: 'nowrap' }}>{customer.first_name} {customer.last_name}</span>;
+			return <span>{customer.first_name} {customer.last_name}</span>;
 		},
 	},
 	{
@@ -142,7 +145,15 @@ class Export extends React.Component<Props, ExportState> {
 			<div>
 				<Button loading={loading} onClick={this.refresh.bind(this)}>加载订单</Button>
 				<Button onClick={this.export.bind(this)}>导出发票</Button>
-				<Table loading={loading} rowKey={rowKey} rowSelection={rowSelection} columns={columns} size='small' dataSource={orders} >
+				<Table
+					className={styles.table}
+					size='small'
+					loading={loading}
+					rowKey={rowKey}
+					rowSelection={rowSelection}
+					columns={columns}
+					dataSource={orders}
+				>
 				</Table>
 			</div>
 		);
