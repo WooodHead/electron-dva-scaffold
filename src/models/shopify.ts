@@ -3,12 +3,17 @@ import { orders, export_invoice, import_express, delivery, change_settings } fro
 import { ShopifyState, ReduxState } from 'interfaces/state';
 import { ExpressOrder } from 'interfaces/shopify';
 
+const shopifySettings_key = 'shopify_settings';
+
+const settings = JSON.parse(window.localStorage.getItem(shopifySettings_key)) || {
+};
+
 export default {
 	namespace: 'shopify',
 	state: {
 		orders: [],
 		express_orders: [],
-		import_settings: {
+		import_settings: settings.import || {
 			order_start_line: 4,
 			excel_mapping: [
 				{ id: 'id', col: 'M', label: '订单ID' },
@@ -20,7 +25,7 @@ export default {
 				{ id: 'recipient', col: 'L', label: '收件人' },
 			]
 		},
-		export_settings: {
+		export_settings: settings.export || {
 			item_start_line: 13,
 			cell_mapping: [
 				{ id: 'date', cell: 'F7', label: '日期' },
@@ -50,10 +55,12 @@ export default {
 		},
 		* applySettings(action, { call, select }) {
 			const { import_settings, export_settings }: ShopifyState = yield select((_: ReduxState) => _.shopify);
-			yield call(change_settings, {
+			const new_settings = {
 				import: import_settings,
 				export: export_settings
-			});
+			};
+			window.localStorage.setItem(shopifySettings_key, JSON.stringify(new_settings));
+			yield call(change_settings, new_settings);
 		},
 		* changeImportSettings({ payload }, { put }) {
 			yield put({
