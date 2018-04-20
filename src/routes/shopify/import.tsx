@@ -128,8 +128,6 @@ class Import extends React.Component<Props, ImportState> {
 			return order.id.toString();
 		};
 
-		console.log(styles.table);
-
 		return (
 			<div>
 				<Button onClick={this.import.bind(this)}>导入出货单</Button>

@@ -90,8 +90,9 @@ class Export extends React.Component<Props, ExportState> {
 		this.setState({ selectedRowKeys: [] });
 		this.props.dispatch({
 			type: 'shopify/query', payload: {
-				status: 'any',
-				fulfillment_status: 'any'
+				financial_status: 'paid',
+				fulfillment_status: 'unshipped',
+				limit: 200
 			} as OrdersOptions
 		});
 	}

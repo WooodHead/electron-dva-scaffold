@@ -1,10 +1,10 @@
 const database = [
-    {
-        id: '1',
-        icon: 'laptop',
-        name: '主面板',
-        route: '/home',
-    },
+    // {
+    //     id: '1',
+    //     icon: 'laptop',
+    //     name: '主面板',
+    //     route: '/home',
+    // },
     {
         id: '2',
         bpid: '1',

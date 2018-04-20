@@ -273,6 +273,9 @@ async function fulfillments(order_id: string) {
 
 export async function delivery(order: ExpressOrder) {
 	let fms = await fulfillments(order.id);
+	if (!fms) {
+		throw new Error(`同步发货状态失败, 找不到订单号为 ${order.id} 的订单`);
+	}
 	fms = fms.filter(fm => {
 		return fm.status === 'pending' || fm.status === 'open' || fm.status === 'success';
 	});

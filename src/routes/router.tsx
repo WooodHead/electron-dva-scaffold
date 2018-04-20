@@ -53,7 +53,7 @@ function RouterConfig({ history, app }: RouterAPI) {
     <ConnectedRouter history={history}>
       <App>
         <Switch>
-          <Route exact path="/" render={() => (<Redirect to="/home" />)} />
+          <Route exact path="/" render={() => (<Redirect to="/export" />)} />
           {
             routes.map(({ path, component, ...dynamics }, index) => (
               <Route
