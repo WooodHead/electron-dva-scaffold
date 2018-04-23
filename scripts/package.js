@@ -27,7 +27,7 @@ packager({
 	name: 'Shopify',
 	dir: path.join(__dirname, '..'),
 	out: 'packager',
-	asar: true,
+	// asar: true,
 	overwrite: true,
 	prune: false,
 	ignore: ignore,

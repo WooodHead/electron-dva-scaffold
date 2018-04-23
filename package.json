@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "node ./scripts/package",
-    "compile": "node ./node_modules/webpack/bin/webpack --colors --watch"
+    "compile": "node ./node_modules/webpack/bin/webpack --progress --colors --watch"
   },
   "author": "xzper",
   "license": "ISC",

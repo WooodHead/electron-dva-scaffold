@@ -143,7 +143,7 @@ const config: webpack.Configuration = {
         path: outPath,
         filename: '[name].js',
         chunkFilename: '[name].[chunkhash].js',
-        publicPath: publicPath
+        publicPath: '../'
     },
     plugins: [
         new CleanWebpackPlugin(['out']),
