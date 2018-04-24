@@ -2,7 +2,7 @@ const path = require('path');
 const packager = require('electron-packager');
 
 const includeFiles = [
-	'out',
+	'dist',
 	'resources',
 	'package.json'
 ];

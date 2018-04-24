@@ -1,0 +1,20 @@
+{
+  "presets": [
+    "es2015",
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    "add-module-exports",
+    "react-require",
+    "syntax-dynamic-import",
+    "transform-runtime",
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "style": true
+      }
+    ]
+  ]
+}
