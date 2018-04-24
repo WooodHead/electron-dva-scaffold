@@ -97,15 +97,13 @@ export async function orders(options?: OrdersOptions) {
 function getAddress(ship: ShopifyOrderAddress) {
 	const { address1, address2, city, province, zip, country } = ship;
 	let address = '';
-	address += `${address1} ${address2}, `;
-	address += `${city}, `;
+	address += `${address1}${address2 ? (' ' + address2) : ''}, `;
+	address += city ? `${city}, ` : '';
 	address += province ? `${province}, ` : '';
 	address += zip ? `${zip}, ` : '';
 	address += country;
 	return address;
 }
-
-
 
 export async function export_invoice(order: ShopifyOrder, export_dir: string) {
 	const workbook = new Workbook();

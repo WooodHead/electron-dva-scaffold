@@ -171,6 +171,7 @@ export interface ShopifyOrder {
 
 export interface ExpressOrder {
 	id: string;
+	name: string;
 	tracking_number: string;
 	twice_number: string;
 	date: string;

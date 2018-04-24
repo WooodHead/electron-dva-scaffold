@@ -15,6 +15,7 @@ interface ImportProps {
 
 interface StateProps {
 	orders: ExpressOrder[];
+	import_loading: boolean;
 	delivery_loading: boolean;
 }
 
@@ -26,8 +27,8 @@ interface ImportState {
 
 const columns: ColumnProps<any>[] = [
 	{
-		title: '订单ID',
-		dataIndex: 'id',
+		title: '订单名称',
+		dataIndex: 'name',
 	},
 	{
 		title: '运单号',
@@ -91,10 +92,12 @@ class Import extends React.Component<Props, ImportState> {
 			return;
 		}
 		const file = paths[0];
-		this.props.dispatch({
-			type: 'shopify/import',
-			payload: file
-		});
+		setTimeout(() => {
+			this.props.dispatch({
+				type: 'shopify/import',
+				payload: file
+			});
+		}, 500);
 	}
 
 	private delivery() {
@@ -115,7 +118,7 @@ class Import extends React.Component<Props, ImportState> {
 	}
 
 	public render() {
-		const { orders, delivery_loading } = this.props;
+		const { orders, delivery_loading, import_loading } = this.props;
 		const rowSelection: TableRowSelection<any> = {
 			selectedRowKeys: this.state.selectedRowKeys,
 			hideDefaultSelections: true,
@@ -131,12 +134,12 @@ class Import extends React.Component<Props, ImportState> {
 
 		return (
 			<div>
-				<Button onClick={this.import.bind(this)}>导入出货单</Button>
+				<Button loading={import_loading} onClick={this.import.bind(this)}>导入出货单</Button>
 				<Button loading={delivery_loading} onClick={this.delivery.bind(this)}>同步发货状态</Button>
 				<Table
 					className={styles.table}
 					size='small'
-					loading={delivery_loading}
+					loading={delivery_loading || (import_loading ? { tip: '正在获取订单数据' } : false)}
 					rowKey={rowKey}
 					rowSelection={rowSelection}
 					columns={columns}
@@ -151,6 +154,7 @@ class Import extends React.Component<Props, ImportState> {
 function mapStateToProps(state: ReduxState, ownProps: ImportProps): StateProps {
 	return {
 		orders: state.shopify.express_orders,
+		import_loading: state.loading.effects['shopify/import'],
 		delivery_loading: state.loading.effects['shopify/delivery']
 	};
 }

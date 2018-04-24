@@ -89,11 +89,7 @@ class Export extends React.Component<Props, ExportState> {
 	private refresh() {
 		this.setState({ selectedRowKeys: [] });
 		this.props.dispatch({
-			type: 'shopify/query', payload: {
-				financial_status: 'paid',
-				fulfillment_status: 'unshipped',
-				limit: 200
-			} as OrdersOptions
+			type: 'shopify/query'
 		});
 	}
 
@@ -110,7 +106,8 @@ class Export extends React.Component<Props, ExportState> {
 
 		dialog.showOpenDialog(remote.getCurrentWindow(), {
 			title: '选择导出文件夹',
-			properties: ['openDirectory']
+			properties: ['openDirectory'],
+			buttonLabel: '保存'
 		}, paths => {
 			if (paths.length < 1) {
 				return;
