@@ -12,7 +12,6 @@ function start() {
 
 	# Configuration
 	export NODE_ENV=development
-	export APP_DEV=1
 	export ELECTRON_ENABLE_LOGGING=1
 	export ELECTRON_ENABLE_STACK_DUMPING=1
 

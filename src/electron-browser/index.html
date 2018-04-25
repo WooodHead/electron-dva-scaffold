@@ -1,12 +1,49 @@
 <!doctype html>
 <html>
+
 <head>
   <title>Shopify 订单导出</title>
-  <meta charset="utf-8"/>
-  <link rel="stylesheet" href="./main.css"/>
+  <meta charset="utf-8" />
+  <script>
+    (function() {
+      if (!process.env.HOT) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = './main.css';
+        // HACK: Writing the script path should be done with webpack
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+    }());
+  </script>
 </head>
+
 <body>
-  <div id="main"/>
-  <script src="./main.js"></script>
+  <div id="main" />
+  <script>
+    {
+      const scripts = [];
+
+      // Dynamically insert the DLL script in development env in the
+      // renderer process
+      if (process.env.NODE_ENV === 'development') {
+        scripts.push('../../dll/renderer.dev.dll.js');
+      }
+
+      // Dynamically insert the bundled app script in the renderer process
+      const port = process.env.PORT || 1212;
+      scripts.push(
+        (process.env.HOT)
+          ? 'http://localhost:' + port + '/dist/main.dev.js'
+          : './main.js'
+      );
+
+      document.write(
+        scripts
+          .map(script => '<script defer src="' + script + '"><\/script>')
+          .join('')
+      );
+    }
+  </script>
 </body>
+
 </html>

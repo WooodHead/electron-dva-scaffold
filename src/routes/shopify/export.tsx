@@ -6,7 +6,6 @@ import { remote } from 'electron';
 import moment from 'moment';
 import { ReduxState } from 'interfaces/state';
 import { DvaRouteComponentProps } from 'interfaces';
-import { OrdersOptions } from 'services/shopify';
 import { TableRowSelection, ColumnProps } from 'antd/lib/table';
 import { ShopifyOrder, ShopifyCustomer } from 'interfaces/shopify';
 import * as styles from './index.less';

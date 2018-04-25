@@ -21,44 +21,44 @@ export function registeRoute(route: RouteDescription) {
 
 registeRoute({
   path: '/home',
-  component: () => System.import('./home'),
+  component: () => import('./home'),
   models: () => [],
 });
 
 registeRoute({
   path: '/login',
-  component: () => System.import('./login'),
-  models: () => [System.import('../models/login')],
+  component: () => import('./login'),
+  models: () => [import('../models/login')],
 });
 
 registeRoute({
   path: '/export',
-  component: () => System.import('./shopify/export'),
-  models: () => [System.import('../models/shopify')],
+  component: () => import('./shopify/export'),
+  models: () => [import('../models/shopify')],
 });
 
 registeRoute({
   path: '/import',
-  component: () => System.import('./shopify/import'),
-  models: () => [System.import('../models/shopify')],
+  component: () => import('./shopify/import'),
+  models: () => [import('../models/shopify')],
 });
 
 registeRoute({
   path: '/settings/export',
-  component: () => System.import('./shopify/settings/ExportSettings'),
-  models: () => [System.import('../models/shopify')],
+  component: () => import('./shopify/settings/ExportSettings'),
+  models: () => [import('../models/shopify')],
 });
 
 registeRoute({
   path: '/settings/import',
-  component: () => System.import('./shopify/settings/ImportSettings'),
-  models: () => [System.import('../models/shopify')],
+  component: () => import('./shopify/settings/ImportSettings'),
+  models: () => [import('../models/shopify')],
 });
 
 function RouterConfig({ history, app }: RouterAPI) {
   const error = dynamic({
     app,
-    component: () => System.import('./error'),
+    component: () => import('./error'),
   });
 
   return (

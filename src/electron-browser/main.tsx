@@ -13,7 +13,7 @@ moment.locale('zh-CN');
 
 const ipc = electron.ipcRenderer;
 
-global['__DEV__'] = !!process.env['APP_DEV'];
+global['__DEV__'] = process.env['NODE_ENV'] === 'development';
 
 function registerListeners(enableDeveloperTools) {
     // Devtools & Reload support
@@ -42,7 +42,7 @@ function registerListeners(enableDeveloperTools) {
     }
 }
 
-registerListeners(process.env['APP_DEV']);
+registerListeners(global['__DEV__']);
 
 function startup(): void {
     // 1. Initialize

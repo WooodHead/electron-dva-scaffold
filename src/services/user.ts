@@ -1,6 +1,4 @@
-import * as request from './request';
-import { server } from 'constants/config';
-import { UserInfo, UserInfoWithUP } from 'interfaces/user';
+import { UserInfoWithUP } from 'interfaces/user';
 import { EnumRole } from 'constants/enum';
 
 const userPermission = {

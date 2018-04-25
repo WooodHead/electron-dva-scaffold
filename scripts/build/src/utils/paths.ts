@@ -1,9 +1,9 @@
 import * as path from 'path';
 
-export const srcPath = path.join(__dirname, '../../../../src');
-export const outPath = path.join(__dirname, '../../../../out');
-export const distPath = path.join(__dirname, '../../../../dist');
+export const rootPath = path.join(__dirname, '../../../..');
+export const srcPath = path.join(rootPath, './src');
+export const outPath = path.join(rootPath, './out');
+export const distPath = path.join(rootPath, './dist');
+export const dllPath = path.join(rootPath, './dll');
 
-export const nodeModulesPath = path.join(__dirname, '../../../../node_modules');
-
-console.log(srcPath);
+export const nodeModulesPath = path.join(rootPath, './node_modules');
